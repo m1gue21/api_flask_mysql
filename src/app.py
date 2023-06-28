@@ -51,7 +51,32 @@ def create_course():
         VALUES ('{0}', '{1}', '{2}')""".format(request.json['code'], request.json['name'], request.json['credits'])
         cursor.execute(sql)
         connection.connection.commit()
-        return jsonify({'message': 'course registered'})
+        return jsonify({'message': 'course created'})
+    except Exception as ex:
+        return jsonify({'message': 'Error'})
+
+
+@app.route('/courses/<code>', methods=['PUT'])
+def update_course(code):
+    try:
+        cursor = connection.connection.cursor()
+        sql = """UPDATE course SET name = '{0}', credits = {1}
+        WHERE code = '{2}'""".format(request.json['name'], request.json['credits'], code)
+        cursor.execute(sql)
+        connection.connection.commit()
+        return jsonify({'message': 'course Updated'})
+    except Exception as ex:
+        return jsonify({'message': 'Error updating'})
+
+
+@app.route('/courses/<code>', methods=['DELETE'])
+def delete_course(code):
+    try:
+        cursor = connection.connection.cursor()
+        sql = "DELETE FROM course WHERE code = '{0}' ".format(code)
+        cursor.execute(sql)
+        connection.connection.commit()
+        return jsonify({'message': 'course deleted'})
     except Exception as ex:
         return jsonify({'message': 'Error'})
 
