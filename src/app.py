@@ -8,7 +8,7 @@ connection = MySQL(app)
 
 
 def page_not_found(error):
-    return "<h1>Page not found, verify the URL</h1>"
+    return "<h1>Page not found, verify the URL</h1>", 404
 
 
 @app.route('/courses', methods=['GET'])
@@ -23,6 +23,22 @@ def list_courses():
             course = {'code': i[0], 'name': i[1], 'credits': i[2]}
             courses.append(course)
         return jsonify({'courses': courses, 'message': 'courses listed!'})
+    except Exception as ex:
+        return jsonify({'message': 'Error'})
+
+
+@app.route('/courses/<code>', methods=['GET'])
+def get_course(code):
+    try:
+        cursor = connection.connection.cursor()
+        sql = "SELECT * FROM course WHERE code = '{0}'".format(code)
+        cursor.execute(sql)
+        data = cursor.fetchone()
+        if data is not None:
+            course = {'code': data[0], 'name': data[1], 'credits': data[2]}
+            return jsonify({'course': course, 'message': 'course found!'})
+        else:
+            return jsonify({'message': 'course not found!'})
     except Exception as ex:
         return jsonify({'message': 'Error'})
 
