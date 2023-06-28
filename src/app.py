@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 from config import config
 
@@ -39,6 +39,19 @@ def get_course(code):
             return jsonify({'course': course, 'message': 'course found!'})
         else:
             return jsonify({'message': 'course not found!'})
+    except Exception as ex:
+        return jsonify({'message': 'Error'})
+
+
+@app.route('/courses', methods=['POST'])
+def create_course():
+    try:
+        cursor = connection.connection.cursor()
+        sql = """INSERT INTO course (code, name, credits)
+        VALUES ('{0}', '{1}', '{2}')""".format(request.json['code'], request.json['name'], request.json['credits'])
+        cursor.execute(sql)
+        connection.connection.commit()
+        return jsonify({'message': 'course registered'})
     except Exception as ex:
         return jsonify({'message': 'Error'})
 
