@@ -20,13 +20,16 @@ CREATE TABLE course (
 I used Postman to test the project.
 
 ## Create
-![image](https://github.com/m1gue21/api_flask_mysql/assets/73451596/f0d6100b-2cf1-4846-b27e-7f9a93f491bc)
+![image](https://github.com/m1gue21/api_flask_mysql/assets/73451596/1795111e-4ba8-4665-a662-e8b5b500af2d)
+
 
 ## Read
-![image](https://github.com/m1gue21/api_flask_mysql/assets/73451596/d150257c-6d3e-44a9-9181-a09e0f737c7e)
+![image](https://github.com/m1gue21/api_flask_mysql/assets/73451596/88c8961c-001d-4c5b-8de7-7c06227da1c3)
+
 
 ## Update 
-![image](https://github.com/m1gue21/api_flask_mysql/assets/73451596/8ffa36a4-9b75-4e8e-8afa-5ad837da68bc)
+![image](https://github.com/m1gue21/api_flask_mysql/assets/73451596/3c4d1578-169e-42f3-80b5-0f22ab4f2578)
 
 ## Delete 
-![image](https://github.com/m1gue21/api_flask_mysql/assets/73451596/f98b3c1d-6fb9-49b0-92f9-97eba005ec9a)
+![image](https://github.com/m1gue21/api_flask_mysql/assets/73451596/00e2e511-1391-43f4-9421-0e1aea25a27b)
+
