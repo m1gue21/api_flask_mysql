@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
+
 from config import config
+from validations import *
 
 app = Flask(__name__)
 
@@ -43,30 +45,58 @@ def get_course(code):
         return jsonify({'message': 'Error'})
 
 
-@app.route('/courses', methods=['POST'])
-def create_course():
+def get_course_bd(code):
     try:
         cursor = connection.connection.cursor()
-        sql = """INSERT INTO course (code, name, credits)
-        VALUES ('{0}', '{1}', '{2}')""".format(request.json['code'], request.json['name'], request.json['credits'])
+        sql = "SELECT code, name, credits FROM course WHERE code = '{0}'".format(code)
         cursor.execute(sql)
-        connection.connection.commit()
-        return jsonify({'message': 'course created'})
+        data = cursor.fetchone()
+        if data is not None:
+            course = {'code': data[0], 'name': data[1], 'credits': data[2]}
+            return course
+        else:
+            return None
     except Exception as ex:
-        return jsonify({'message': 'Error'})
+        raise ex
+
+
+@app.route('/courses', methods=['POST'])
+def create_course():
+    if (code_validation(request.json['code']) and name_validation(request.json['name']) and credits_validation(
+            request.json['credits'])):
+        try:
+            course = get_course_bd(request.json['code'])
+            print(course)
+            if course is not None:
+                return jsonify({'message': "This code is already in use"})
+            else:
+                cursor = connection.connection.cursor()
+                sql = """INSERT INTO course (code, name, credits)
+                VALUES ('{0}', '{1}', '{2}')""".format(request.json['code'], request.json['name'],
+                                                       request.json['credits'])
+                cursor.execute(sql)
+                connection.connection.commit()
+                return jsonify({'message': 'course created'})
+        except Exception as ex:
+            return jsonify({'message': 'Error'})
+    else:
+        return jsonify({'message': "Invalid parameters for creating a course"})
 
 
 @app.route('/courses/<code>', methods=['PUT'])
 def update_course(code):
-    try:
-        cursor = connection.connection.cursor()
-        sql = """UPDATE course SET name = '{0}', credits = {1}
-        WHERE code = '{2}'""".format(request.json['name'], request.json['credits'], code)
-        cursor.execute(sql)
-        connection.connection.commit()
-        return jsonify({'message': 'course Updated'})
-    except Exception as ex:
-        return jsonify({'message': 'Error updating'})
+    if code_validation(code) and name_validation(request.json['name']) and credits_validation(request.json['credits']):
+        try:
+            cursor = connection.connection.cursor()
+            sql = """UPDATE course SET name = '{0}', credits = {1}
+            WHERE code = '{2}'""".format(request.json['name'], request.json['credits'], code)
+            cursor.execute(sql)
+            connection.connection.commit()
+            return jsonify({'message': 'course Updated'})
+        except Exception as ex:
+            return jsonify({'message': 'Error updating'})
+    else:
+        return jsonify({'message': "Invalid parameters for updating a course"})
 
 
 @app.route('/courses/<code>', methods=['DELETE'])
